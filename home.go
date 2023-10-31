@@ -1,8 +1,8 @@
 package main
 
 import (
+	"GoStack/lib"
 	"github.com/gin-gonic/gin"
-	"helphub/lib"
 )
 
 type Div struct {
