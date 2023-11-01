@@ -18,6 +18,7 @@ type BaseComponent struct {
 	OuterHtml  string
 	style      []byte
 	classes    []string
+	id         string
 }
 
 func (b *BaseComponent) GetClass() []string {
@@ -25,6 +26,11 @@ func (b *BaseComponent) GetClass() []string {
 }
 func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
 	b.classes = append(b.classes, c...)
+	return b
+}
+
+func (b *BaseComponent) AddId(i string) *BaseComponent {
+	b.id = i
 	return b
 }
 
@@ -159,9 +165,10 @@ func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 	}
 
 	err = base.Execute(writer, struct {
+		Id    string
 		Class string
 		Body  string
-	}{classes.String(), sb.String()})
+	}{b.id, classes.String(), sb.String()})
 	if err != nil {
 		panic(err)
 	}

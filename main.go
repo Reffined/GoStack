@@ -7,18 +7,12 @@ import (
 
 func main() {
 	r := gin.Default()
-	out := html.Div().
-		AddRouter(r).
-		AddName("main").
-		AddChild(html.Div().
-			AddRouter(r).
-			AddName("inner")).
-		AddClass("test")
-
-	out.AddStyle("./test.css")
 	html.Page(r).
 		AddName("home").
-		AddChild(out)
+		AddChild(html.Div().
+			AddChild(html.P("Hello World").
+				AddClass("text").
+				AddStyle("./test.css")))
 
 	err := r.Run("0.0.0.0:4040")
 	if err != nil {
