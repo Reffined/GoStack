@@ -17,52 +17,71 @@ type BaseComponent struct {
 	OuterHtml  string
 }
 
-func (b *BaseComponent) AddChild(c Component) {
+func (b *BaseComponent) AddOuterHtml(h string) *BaseComponent {
+	b.OuterHtml = h
+	return b
+}
+
+func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
+	b.endPoint = e
+	if b.router == nil {
+		panic("add a router before adding an endpoint")
+	}
+	g := b.router.Group(b.Route())
+
+	if e.Get != nil {
+		g.GET("", e.Get)
+	}
+
+	if e.Post != nil {
+		g.POST("", e.Post)
+	}
+
+	if e.Put != nil {
+		g.PUT("", e.Put)
+	}
+
+	if e.Delete != nil {
+		g.DELETE("", e.Delete)
+	}
+
+	return b
+}
+
+func (b *BaseComponent) AddRouter(r *gin.Engine) *BaseComponent {
+	b.router = r
+	return b
+}
+
+func (b *BaseComponent) addParent(p Component) *BaseComponent {
+	b.parent = p
+	return b
+}
+
+func (b *BaseComponent) AddName(name string) *BaseComponent {
+	b.name = name
+	return b
+}
+
+func (b *BaseComponent) AddChild(c Component) *BaseComponent {
+	bc, ok := c.(*BaseComponent)
+	if ok {
+		bc.addParent(b)
+	}
 	b.components = append(b.components, c)
+
+	return b
 }
 
 func (b *BaseComponent) Endpoint() *Endpoint {
 	return b.endPoint
 }
 
-func NewComponent(name string, router *gin.Engine, parent Component, children []Component, endPoint *Endpoint) *BaseComponent {
-	var b BaseComponent
-	b.router = router
-	b.parent = parent
-	b.name = name
-	b.components = children
-	b.endPoint = endPoint
-
-	group := router.Group(b.Route())
-	if endPoint != nil {
-		if endPoint.Get != nil {
-			group.GET("/", endPoint.Get)
-		}
-
-		if endPoint.Post != nil {
-			group.POST("/", endPoint.Post)
-		}
-
-		if endPoint.Put != nil {
-			group.PUT("/", endPoint.Put)
-		}
-
-		if endPoint.Delete != nil {
-			group.DELETE("/", endPoint.Delete)
-		}
-	} else {
-		group.GET("/", func(context *gin.Context) {
-			b.Render(context.Writer, "")
-		})
-	}
-	return &b
-}
-
 func (b *BaseComponent) Parent() Component {
 	return b.parent
 }
 
-func (b *BaseComponent) Render(writer io.Writer, outerHtml string) {
+func (b *BaseComponent) Render(writer io.Writer) {
 	var tmpl string
 
 	if b.OuterHtml == "" {
@@ -78,7 +97,7 @@ func (b *BaseComponent) Render(writer io.Writer, outerHtml string) {
 
 	sb := strings.Builder{}
 	for _, v := range b.components {
-		v.Render(&sb, "")
+		v.Render(&sb)
 	}
 
 	err = base.Execute(writer, sb.String())

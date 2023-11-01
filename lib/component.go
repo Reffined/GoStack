@@ -6,11 +6,10 @@ import (
 
 type Component interface {
 	Parent() Component
-	Render(writer io.Writer, outerHtml string)
+	Render(writer io.Writer)
 	Routes() []string
 	Components() []Component
 	Route() string
 	Endpoint() *Endpoint
 	Name() string
-	AddChild(c Component)
 }
