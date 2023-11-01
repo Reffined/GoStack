@@ -14,10 +14,9 @@ func main() {
 			AddRouter(r).
 			AddName("inner"))
 
-	r.GET("/", func(context *gin.Context) {
-		out.Render(context.Writer)
-		return
-	})
+	html.Page(r).
+		AddName("home").
+		AddChild(out)
 
 	err := r.Run("0.0.0.0:4040")
 	if err != nil {

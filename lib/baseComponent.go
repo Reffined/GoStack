@@ -3,6 +3,7 @@ package lib
 import (
 	"github.com/gin-gonic/gin"
 	"io"
+	"os"
 	"strings"
 	"text/template"
 )
@@ -15,6 +16,29 @@ type BaseComponent struct {
 	endPoint   *Endpoint
 	components []Component
 	OuterHtml  string
+	style      []byte
+}
+
+func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
+	file, err := os.Open(cssPath)
+	if err != nil {
+		panic(err)
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(file)
+	stat, _ := file.Stat()
+	size := stat.Size()
+	buff := make([]byte, size)
+	_, err = file.Read(buff)
+	if err != nil {
+		panic(err)
+	}
+	b.style = buff
+	return b
 }
 
 func (b *BaseComponent) AddOuterHtml(h string) *BaseComponent {
@@ -31,18 +55,22 @@ func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
 
 	if e.Get != nil {
 		g.GET("", e.Get)
+		b.routes = append(b.routes, "GET:"+b.Route())
 	}
 
 	if e.Post != nil {
 		g.POST("", e.Post)
+		b.routes = append(b.routes, "POST:"+b.Route())
 	}
 
 	if e.Put != nil {
 		g.PUT("", e.Put)
+		b.routes = append(b.routes, "PUT:"+b.Route())
 	}
 
 	if e.Delete != nil {
 		g.DELETE("", e.Delete)
+		b.routes = append(b.routes, "DELETE:"+b.Route())
 	}
 
 	return b
@@ -51,6 +79,10 @@ func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
 func (b *BaseComponent) AddRouter(r *gin.Engine) *BaseComponent {
 	b.router = r
 	return b
+}
+
+func (b *BaseComponent) AddParent(p Component) {
+	b.parent = p
 }
 
 func (b *BaseComponent) addParent(p Component) *BaseComponent {
@@ -81,7 +113,7 @@ func (b *BaseComponent) Parent() Component {
 	return b.parent
 }
 
-func (b *BaseComponent) Render(writer io.Writer) {
+func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 	var tmpl string
 
 	if b.OuterHtml == "" {
@@ -96,8 +128,19 @@ func (b *BaseComponent) Render(writer io.Writer) {
 	}
 
 	sb := strings.Builder{}
+
+	if b.style != nil {
+		_, err = styles.Write(b.style)
+		if err != nil {
+			panic(err)
+		}
+		_, err = styles.Write([]byte("\n"))
+		if err != nil {
+			panic(err)
+		}
+	}
 	for _, v := range b.components {
-		v.Render(&sb)
+		v.Render(&sb, styles)
 	}
 
 	err = base.Execute(writer, sb.String())
@@ -124,4 +167,8 @@ func (b *BaseComponent) Route() string {
 
 func (b *BaseComponent) Components() []Component {
 	return b.components
+}
+
+func (b *BaseComponent) Style() string {
+	return string(b.style)
 }
