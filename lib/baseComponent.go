@@ -17,6 +17,15 @@ type BaseComponent struct {
 	components []Component
 	OuterHtml  string
 	style      []byte
+	classes    []string
+}
+
+func (b *BaseComponent) GetClass() []string {
+	return b.classes
+}
+func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
+	b.classes = append(b.classes, c...)
+	return b
 }
 
 func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
@@ -143,7 +152,16 @@ func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 		v.Render(&sb, styles)
 	}
 
-	err = base.Execute(writer, sb.String())
+	classes := strings.Builder{}
+	for _, v := range b.classes {
+		classes.WriteString(v)
+		classes.WriteString(" ")
+	}
+
+	err = base.Execute(writer, struct {
+		Class string
+		Body  string
+	}{classes.String(), sb.String()})
 	if err != nil {
 		panic(err)
 	}

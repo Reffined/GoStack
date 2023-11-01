@@ -8,6 +8,6 @@ type GSDiv struct {
 
 func Div() *GSDiv {
 	var d GSDiv
-	d.AddOuterHtml(`<div>{{ . }}</div>`)
+	d.AddOuterHtml(`<div class="{{ .Class }}">{{ .Body }}</div>`)
 	return &d
 }

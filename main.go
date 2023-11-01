@@ -12,8 +12,10 @@ func main() {
 		AddName("main").
 		AddChild(html.Div().
 			AddRouter(r).
-			AddName("inner"))
+			AddName("inner")).
+		AddClass("test")
 
+	out.AddStyle("./test.css")
 	html.Page(r).
 		AddName("home").
 		AddChild(out)
