@@ -2,9 +2,11 @@ package lib
 
 import (
 	"GoStack/lib/htmx"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"io"
 	"os"
+	"reflect"
 	"strings"
 	"text/template"
 )
@@ -21,6 +23,8 @@ type BaseComponent struct {
 	classes    []string
 	id         string
 	Htmx       *htmx.Hx
+	TagName    string
+	Body       string
 }
 
 func (b *BaseComponent) GetClass() []string {
@@ -133,6 +137,7 @@ func (b *BaseComponent) Parent() Component {
 }
 
 func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
+	b.makeHtml(b.TagName, b.Body, b.Htmx)
 	var tmpl string
 
 	if b.OuterHtml == "" {
@@ -200,4 +205,51 @@ func (b *BaseComponent) Components() []Component {
 
 func (b *BaseComponent) Style() string {
 	return string(b.style)
+}
+
+func (b *BaseComponent) makeHtml(tagName string, body string, htmx *htmx.Hx) string {
+	hx := strings.Builder{}
+	if htmx != nil {
+		ty := reflect.TypeOf(*htmx)
+		for i := 0; i < 3; i++ {
+			field := ty.Field(i)
+			fValue := reflect.ValueOf(*htmx).FieldByIndex([]int{i}).String()
+			var attr string
+			if fValue != "" {
+				fName := strings.ToLower(field.Name)
+				if fValue == "this" {
+					attr = fmt.Sprintf(`hx-%s="%s" `, fName, b.Route())
+				} else {
+					attr = fmt.Sprintf(`hx-%s="%s" `, fName, fValue)
+				}
+				hx.WriteString(attr)
+			}
+		}
+		for i := 3; i < ty.NumField(); i++ {
+			field := ty.Field(i)
+			fValue := reflect.ValueOf(*htmx).FieldByIndex([]int{i}).String()
+			if fValue != "" {
+				fName := strings.ToLower(field.Name)
+				attr := fmt.Sprintf(`hx-%s="%s" `, fName, fValue)
+				hx.WriteString(attr)
+			}
+		}
+	}
+
+	var str string
+	if body == "" {
+		if hx.String() == "" {
+			str = fmt.Sprintf(`<%s class="{{ .Class }}" id="{{ .Id }}">{{ .Body }}</%s>`, tagName, tagName)
+		} else {
+			str = fmt.Sprintf(`<%s %s class="{{ .Class }}" id="{{ .Id }}">{{ .Body }}</%s>`, tagName, hx.String(), tagName)
+		}
+	} else {
+		if hx.String() == "" {
+			str = fmt.Sprintf(`<%s class="{{ .Class }}" id="{{ .Id }}">%s</%s>`, tagName, body, tagName)
+		} else {
+			str = fmt.Sprintf(`<%s %s class="{{ .Class }}" id="{{ .Id }}">%s</%s>`, tagName, hx.String(), body, tagName)
+		}
+	}
+	b.AddOuterHtml(str)
+	return str
 }
