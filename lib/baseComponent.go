@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"GoStack/lib/htmx"
 	"github.com/gin-gonic/gin"
 	"io"
 	"os"
@@ -19,6 +20,7 @@ type BaseComponent struct {
 	style      []byte
 	classes    []string
 	id         string
+	Htmx       *htmx.Hx
 }
 
 func (b *BaseComponent) GetClass() []string {
@@ -26,6 +28,11 @@ func (b *BaseComponent) GetClass() []string {
 }
 func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
 	b.classes = append(b.classes, c...)
+	return b
+}
+
+func (b *BaseComponent) AddHtmx(hx *htmx.Hx) *BaseComponent {
+	b.Htmx = hx
 	return b
 }
 
@@ -111,10 +118,7 @@ func (b *BaseComponent) AddName(name string) *BaseComponent {
 }
 
 func (b *BaseComponent) AddChild(c Component) *BaseComponent {
-	bc, ok := c.(*BaseComponent)
-	if ok {
-		bc.addParent(b)
-	}
+	c.AddParent(b)
 	b.components = append(b.components, c)
 
 	return b

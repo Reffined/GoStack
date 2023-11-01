@@ -69,7 +69,7 @@ func (p *GSPage) AddChild(c lib.Component) *GSPage {
 
 func Page(router *gin.Engine) *GSPage {
 	if templatePage == "" {
-		file, err := os.Open("./html/pageTemplate.html")
+		file, err := os.Open("./lib/html/pageTemplate.html")
 		if err != nil {
 			panic(err)
 		}
