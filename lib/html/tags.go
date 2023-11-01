@@ -18,7 +18,21 @@ func (t *Tag) makeHtml(tagName string, body string, htmx *htmx.Hx) string {
 	hx := strings.Builder{}
 	if htmx != nil {
 		ty := reflect.TypeOf(*htmx)
-		for i := 0; i < ty.NumField(); i++ {
+		for i := 0; i < 3; i++ {
+			field := ty.Field(i)
+			fValue := reflect.ValueOf(*htmx).FieldByIndex([]int{i}).String()
+			var attr string
+			if fValue != "" {
+				fName := strings.ToLower(field.Name)
+				if fValue == "this" {
+					attr = fmt.Sprintf(`hx-%s="%s" `, fName, t.Route())
+				} else {
+					attr = fmt.Sprintf(`hx-%s="%s" `, fName, fValue)
+				}
+				hx.WriteString(attr)
+			}
+		}
+		for i := 3; i < ty.NumField(); i++ {
 			field := ty.Field(i)
 			fValue := reflect.ValueOf(*htmx).FieldByIndex([]int{i}).String()
 			if fValue != "" {

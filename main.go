@@ -2,7 +2,7 @@ package main
 
 import (
 	"GoStack/lib"
-	html2 "GoStack/lib/html"
+	"GoStack/lib/html"
 	"GoStack/lib/htmx"
 	"github.com/gin-gonic/gin"
 )
@@ -10,25 +10,25 @@ import (
 func main() {
 	r := gin.Default()
 	hx := htmx.Hx{
-		Get:     "/home/section/msg",
+		Get:     "this",
 		Trigger: "mouseenter",
 		Swap:    "outerHtml",
 	}
-	p := html2.P("Hello World", &hx).
+	p := html.P("Hello World", &hx).
 		AddRouter(r).
 		AddName("msg").
 		AddClass("text").
 		AddStyle("./test.css")
 
-	html2.Page(r).
+	html.Page(r).
 		AddName("home").
-		AddChild(html2.Div(nil).
+		AddChild(html.Div(nil).
 			AddName("section").
 			AddChild(p))
 
 	p.AddEndpoint(&lib.Endpoint{
 		Get: func(context *gin.Context) {
-			html2.P("Hello Alireza", nil).
+			html.P("Hello Alireza", nil).
 				AddRouter(r).
 				AddName("msg").
 				AddClass("text").
