@@ -10,7 +10,7 @@ import (
 func main() {
 	r := gin.Default()
 
-	p := html.P("Hello World").
+	h := html.H("Hello World", 1).
 		AddRouter(r).
 		AddName("msg").
 		AddClass("text").
@@ -20,11 +20,11 @@ func main() {
 		AddName("home").
 		AddChild(html.Div().
 			AddName("section").
-			AddChild(p))
+			AddChild(h))
 
-	p.AddEndpoint(&lib.Endpoint{
+	h.AddEndpoint(&lib.Endpoint{
 		Get: func(context *gin.Context) {
-			html.P("Hello Alireza").
+			html.H("Hello World", 2).
 				AddRouter(r).
 				AddName("msg").
 				AddClass("text").
