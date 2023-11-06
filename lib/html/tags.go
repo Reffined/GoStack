@@ -46,7 +46,8 @@ func Ul(children ...*lib.BaseComponent) *lib.BaseComponent {
 	tag := lib.BaseComponent{}
 	tag.TagName = "ul"
 	for _, v := range children {
-		tag.AddChild(v)
+		li := Li(v)
+		tag.AddChild(li)
 	}
 	return &tag
 }
@@ -55,7 +56,8 @@ func Ol(children ...*lib.BaseComponent) *lib.BaseComponent {
 	tag := lib.BaseComponent{}
 	tag.TagName = "ol"
 	for _, v := range children {
-		tag.AddChild(v)
+		li := Li(v)
+		tag.AddChild(li)
 	}
 	return &tag
 }
