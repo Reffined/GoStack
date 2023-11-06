@@ -61,3 +61,10 @@ func Ol(children ...*lib.BaseComponent) *lib.BaseComponent {
 	}
 	return &tag
 }
+
+func Img(src string, alt string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "img"
+	tag.AddAttributes(fmt.Sprintf("src=%s alt=%s", src, alt))
+	return &tag
+}
