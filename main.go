@@ -16,11 +16,14 @@ func main() {
 		AddClass("text").
 		AddStyle("./test.css")
 
+	a := html.A("Home", "/")
+
 	html.Page(r).
 		AddName("home").
 		AddChild(html.Div().
 			AddName("section").
-			AddChild(h))
+			AddChild(h).
+			AddChild(a))
 
 	h.AddEndpoint(&lib.Endpoint{
 		Get: func(context *gin.Context) {

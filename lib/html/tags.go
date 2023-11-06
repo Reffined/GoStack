@@ -24,3 +24,11 @@ func H(text string, lvl int) *lib.BaseComponent {
 	tag.Body = text
 	return &tag
 }
+
+func A(text string, href string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "a"
+	tag.Body = text
+	tag.AddAttributes("href=" + href)
+	return &tag
+}

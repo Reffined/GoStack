@@ -25,8 +25,12 @@ type BaseComponent struct {
 	Htmx       *htmx.Hx
 	TagName    string
 	Body       string
+	Attributes []string
 }
 
+func (b *BaseComponent) AddAttributes(attrs ...string) {
+	b.Attributes = attrs
+}
 func (b *BaseComponent) GetClass() []string {
 	return b.classes
 }
@@ -34,17 +38,14 @@ func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
 	b.classes = append(b.classes, c...)
 	return b
 }
-
 func (b *BaseComponent) AddHtmx(hx *htmx.Hx) *BaseComponent {
 	b.Htmx = hx
 	return b
 }
-
 func (b *BaseComponent) AddId(i string) *BaseComponent {
 	b.id = i
 	return b
 }
-
 func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
 	file, err := os.Open(cssPath)
 	if err != nil {
@@ -66,12 +67,10 @@ func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
 	b.style = buff
 	return b
 }
-
 func (b *BaseComponent) AddOuterHtml(h string) *BaseComponent {
 	b.OuterHtml = h
 	return b
 }
-
 func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
 	b.endPoint = e
 	if b.router == nil {
@@ -101,21 +100,17 @@ func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
 
 	return b
 }
-
 func (b *BaseComponent) AddRouter(r *gin.Engine) *BaseComponent {
 	b.router = r
 	return b
 }
-
 func (b *BaseComponent) AddParent(p Component) {
 	b.parent = p
 }
-
 func (b *BaseComponent) addParent(p Component) *BaseComponent {
 	b.parent = p
 	return b
 }
-
 func (b *BaseComponent) AddName(name string) *BaseComponent {
 	b.name = name
 	return b
@@ -236,19 +231,18 @@ func (b *BaseComponent) makeHtml(tagName string, body string, htmx *htmx.Hx) str
 		}
 	}
 
+	attr := strings.Builder{}
+	if b.Attributes != nil && len(b.Attributes) > 0 {
+		for _, v := range b.Attributes {
+			attr.WriteString(v + " ")
+		}
+	}
+
 	var str string
 	if body == "" {
-		if hx.String() == "" {
-			str = fmt.Sprintf(`<%s class="{{ .Class }}" id="{{ .Id }}">{{ .Body }}</%s>`, tagName, tagName)
-		} else {
-			str = fmt.Sprintf(`<%s %s class="{{ .Class }}" id="{{ .Id }}">{{ .Body }}</%s>`, tagName, hx.String(), tagName)
-		}
+		str = fmt.Sprintf(`<%s %s %s class="{{ .Class }}" id="{{ .Id }}">{{ .Body }}</%s>`, tagName, attr.String(), hx.String(), tagName)
 	} else {
-		if hx.String() == "" {
-			str = fmt.Sprintf(`<%s class="{{ .Class }}" id="{{ .Id }}">%s</%s>`, tagName, body, tagName)
-		} else {
-			str = fmt.Sprintf(`<%s %s class="{{ .Class }}" id="{{ .Id }}">%s</%s>`, tagName, hx.String(), body, tagName)
-		}
+		str = fmt.Sprintf(`<%s %s %s class="{{ .Class }}" id="{{ .Id }}">%s</%s>`, tagName, attr.String(), hx.String(), body, tagName)
 	}
 	b.AddOuterHtml(str)
 	return str
