@@ -12,18 +12,12 @@ func main() {
 	title.AddStyle("./test.css")
 	title.AddClass("text")
 
-	list := html.Ul(html.P("item1"),
-		html.P("item2"),
-		html.P("item3")).
-		AddClass("text")
-	img := html.Img("/assets/train-ride.png", "human")
+	form := html.Form("/login").AddChild(html.Input("text", "username", ""))
 
 	html.Page(r).
 		AddName("homePage").
 		AddChild(title).
-		AddChild(list).
-		AddChild(img)
-
+		AddChild(form)
 	err := r.Run("0.0.0.0:4040")
 	if err != nil {
 		panic(err)

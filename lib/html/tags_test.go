@@ -72,3 +72,38 @@ func TestUl(t *testing.T) {
 		}
 	})
 }
+
+func TestOl(t *testing.T) {
+	child := Li(P("hello"))
+	tag := Ol(child).AddName("main")
+	buff := strings.Builder{}
+	tag.Render(&buff, nil)
+	t.Run("outerHTML is valid", func(t *testing.T) {
+		if buff.String() != "<ol   class=\"\" id=\"\"><li   class=\"\" id=\"\"><li   class=\"\" id=\"\"><p   class=\"\" id=\"\">hello</p></li></li></ol>" {
+			t.Fatal(buff.String())
+		}
+	})
+}
+
+func TestImg(t *testing.T) {
+	tag := Img("/assets/img.png", "pic").AddName("main")
+	buff := strings.Builder{}
+	tag.Render(&buff, nil)
+	t.Run("outerHTML is valid", func(t *testing.T) {
+		if buff.String() != "<img src=/assets/img.png alt=pic   class=\"\" id=\"\"></img>" {
+			t.Fatal(buff.String())
+		}
+	})
+}
+
+func TestForm(t *testing.T) {
+	child := Input("text", "username", "username")
+	tag := Form("/login").AddName("main").AddChild(child)
+	buff := strings.Builder{}
+	tag.Render(&buff, nil)
+	t.Run("outerHTML is valid", func(t *testing.T) {
+		if buff.String() != "<form action=\"/login\"   class=\"\" id=\"\"><input type=\"text\" name=\"username\" value=\"username\"   class=\"\" id=\"\"></input></form>" {
+			t.Fatal(buff.String())
+		}
+	})
+}
