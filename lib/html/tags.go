@@ -82,3 +82,10 @@ func Input(inputType string, name string, value string) *lib.BaseComponent {
 	tag.AddAttributes(fmt.Sprintf("type=\"%s\" name=\"%s\" value=\"%s\"", inputType, name, value))
 	return &tag
 }
+
+func Option(text string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "option"
+	tag.Body = text
+	return &tag
+}
