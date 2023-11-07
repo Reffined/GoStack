@@ -68,3 +68,10 @@ func Img(src string, alt string) *lib.BaseComponent {
 	tag.AddAttributes(fmt.Sprintf("src=%s alt=%s", src, alt))
 	return &tag
 }
+
+func Form(action string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "form"
+	tag.AddAttributes(fmt.Sprintf("action=\"%s\"", action))
+	return &tag
+}
