@@ -75,3 +75,10 @@ func Form(action string) *lib.BaseComponent {
 	tag.AddAttributes(fmt.Sprintf("action=\"%s\"", action))
 	return &tag
 }
+
+func Input(inputType string, name string, value string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "input"
+	tag.AddAttributes(fmt.Sprintf("type=\"%s\" name=\"%s\" value=\"%s\"", inputType, name, value))
+	return &tag
+}
