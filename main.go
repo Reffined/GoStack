@@ -9,10 +9,12 @@ func main() {
 	r := gin.Default()
 	r.Static("/assets", "./assets")
 	title := html.H("Home", 1)
-	title.AddStyle("./test.css")
+	title.AddStyle("./assets/css/test.css")
 	title.AddClass("text")
 
 	form := html.Form("/login").AddChild(html.Input("text", "username", ""))
+	btn := html.Button("submit").AddClass("btn btn-primary")
+	form.AddChild(btn)
 
 	html.Page(r).
 		AddName("homePage").

@@ -83,6 +83,13 @@ func Input(inputType string, name string, value string) *lib.BaseComponent {
 	return &tag
 }
 
+func Button(text string) *lib.BaseComponent {
+	tag := lib.BaseComponent{}
+	tag.TagName = "button"
+	tag.Body = text
+	return &tag
+}
+
 func Option(text string) *lib.BaseComponent {
 	tag := lib.BaseComponent{}
 	tag.TagName = "option"
