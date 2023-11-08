@@ -9,17 +9,14 @@ func main() {
 	r := gin.Default()
 	r.Static("/assets", "./assets")
 	title := html.H("Home", 1)
-	title.AddStyle("./assets/css/test.css")
-	title.AddClass("text")
 
-	form := html.Form("/login").AddChild(html.Input("text", "username", ""))
-	btn := html.Button("submit").AddClass("btn btn-primary")
-	form.AddChild(btn)
+	title.AddClass("text")
 
 	html.Page(r).
 		AddName("homePage").
 		AddChild(title).
-		AddChild(form)
+		AddStyle("./assets/css/test.css")
+
 	err := r.Run("0.0.0.0:4040")
 	if err != nil {
 		panic(err)

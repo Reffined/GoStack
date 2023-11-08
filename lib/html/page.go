@@ -19,6 +19,15 @@ type GSPage struct {
 	endpoint *lib.Endpoint
 }
 
+func (p *GSPage) AddStyle(file string) *GSPage {
+	if p.children == nil || len(p.children) == 0 {
+		return p
+	}
+	baseComp := p.children[0].(*lib.BaseComponent)
+	baseComp.AddStyle(file)
+	return p
+}
+
 func (p *GSPage) AddParent(component lib.Component) {
 	v, ok := component.(*GSPage)
 	if ok {
