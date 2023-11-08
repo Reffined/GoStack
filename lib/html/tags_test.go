@@ -107,3 +107,14 @@ func TestForm(t *testing.T) {
 		}
 	})
 }
+
+func TestOption(t *testing.T) {
+	tag := Option("option")
+	buff := strings.Builder{}
+	tag.Render(&buff, nil)
+	t.Run("outerHTML is valid", func(t *testing.T) {
+		if buff.String() != "<option   class=\"\" id=\"\">option</option>" {
+			t.Fatal(buff.String())
+		}
+	})
+}
