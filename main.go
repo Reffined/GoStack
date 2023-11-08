@@ -8,14 +8,18 @@ import (
 func main() {
 	r := gin.Default()
 	r.Static("/assets", "./assets")
-	title := html.H("Home", 1)
 
-	title.AddClass("text")
+	title := html.H("Home", 1).
+		AddClass("col-fluid py-5")
+
+	row := html.Div().
+		AddClass("container text-center").
+		AddChild(title)
 
 	html.Page(r).
 		AddName("homePage").
-		AddChild(title).
-		AddStyle("./assets/css/test.css")
+		AddChild(row).
+		AddStyle("./assets/scss/main.css")
 
 	err := r.Run("0.0.0.0:4040")
 	if err != nil {
