@@ -23,8 +23,10 @@ func (p *GSPage) AddStyle(file string) *GSPage {
 	if p.children == nil || len(p.children) == 0 {
 		return p
 	}
-	baseComp := p.children[0].(*lib.BaseComponent)
-	baseComp.AddStyle(file)
+	baseComp, ok := p.children[0].(*lib.BaseComponent)
+	if ok {
+		baseComp.AddStyle(file)
+	}
 	return p
 }
 
