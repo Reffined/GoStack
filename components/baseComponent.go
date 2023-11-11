@@ -1,9 +1,9 @@
-package lib
+package components
 
 import (
-	"GoStack/lib/htmx"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/reffined/GoStack/htmx"
 	"io"
 	"os"
 	"reflect"
@@ -12,38 +12,38 @@ import (
 )
 
 type BaseComponent struct {
-	name       string
-	parent     Component
-	router     *gin.Engine
-	routes     []string
-	endPoint   *Endpoint
-	components []Component
-	OuterHtml  string
-	style      []byte
-	classes    []string
-	id         string
-	Htmx       *htmx.Hx
-	TagName    string
-	Body       string
-	Attributes []string
+	Bname       string
+	Bparent     Component
+	Brouter     *gin.Engine
+	Broutes     []string
+	BendPoint   *Endpoint
+	Bcomponents []Component
+	BOuterHtml  string
+	Bstyle      []byte
+	Bclasses    []string
+	Bid         string
+	BHtmx       *htmx.Hx
+	TagName     string
+	Body        string
+	Attributes  []string
 }
 
 func (b *BaseComponent) AddAttributes(attrs ...string) {
 	b.Attributes = attrs
 }
 func (b *BaseComponent) GetClass() []string {
-	return b.classes
+	return b.Bclasses
 }
 func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
-	b.classes = append(b.classes, c...)
+	b.Bclasses = append(b.Bclasses, c...)
 	return b
 }
 func (b *BaseComponent) AddHtmx(hx *htmx.Hx) *BaseComponent {
-	b.Htmx = hx
+	b.BHtmx = hx
 	return b
 }
 func (b *BaseComponent) AddId(i string) *BaseComponent {
-	b.id = i
+	b.Bid = i
 	return b
 }
 func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
@@ -64,81 +64,81 @@ func (b *BaseComponent) AddStyle(cssPath string) *BaseComponent {
 	if err != nil {
 		panic(err)
 	}
-	b.style = buff
+	b.Bstyle = buff
 	return b
 }
 func (b *BaseComponent) AddOuterHtml(h string) *BaseComponent {
-	b.OuterHtml = h
+	b.BOuterHtml = h
 	return b
 }
 func (b *BaseComponent) AddEndpoint(e *Endpoint) *BaseComponent {
-	b.endPoint = e
-	if b.router == nil {
-		panic("add a router before adding an endpoint")
+	b.BendPoint = e
+	if b.Brouter == nil {
+		panic("add a Brouter before adding an endpoint")
 	}
-	g := b.router.Group(b.Route())
+	g := b.Brouter.Group(b.Route())
 
 	if e.Get != nil {
 		g.GET("", e.Get)
-		b.routes = append(b.routes, "GET:"+b.Route())
+		b.Broutes = append(b.Broutes, "GET:"+b.Route())
 	}
 
 	if e.Post != nil {
 		g.POST("", e.Post)
-		b.routes = append(b.routes, "POST:"+b.Route())
+		b.Broutes = append(b.Broutes, "POST:"+b.Route())
 	}
 
 	if e.Put != nil {
 		g.PUT("", e.Put)
-		b.routes = append(b.routes, "PUT:"+b.Route())
+		b.Broutes = append(b.Broutes, "PUT:"+b.Route())
 	}
 
 	if e.Delete != nil {
 		g.DELETE("", e.Delete)
-		b.routes = append(b.routes, "DELETE:"+b.Route())
+		b.Broutes = append(b.Broutes, "DELETE:"+b.Route())
 	}
 
 	return b
 }
 func (b *BaseComponent) AddRouter(r *gin.Engine) *BaseComponent {
-	b.router = r
+	b.Brouter = r
 	return b
 }
 func (b *BaseComponent) AddParent(p Component) {
-	b.parent = p
+	b.Bparent = p
 }
 func (b *BaseComponent) addParent(p Component) *BaseComponent {
-	b.parent = p
+	b.Bparent = p
 	return b
 }
 func (b *BaseComponent) AddName(name string) *BaseComponent {
-	b.name = name
+	b.Bname = name
 	return b
 }
 
 func (b *BaseComponent) AddChild(c Component) *BaseComponent {
 	c.AddParent(b)
-	b.components = append(b.components, c)
+	b.Bcomponents = append(b.Bcomponents, c)
 
 	return b
 }
 
 func (b *BaseComponent) Endpoint() *Endpoint {
-	return b.endPoint
+	return b.BendPoint
 }
 
 func (b *BaseComponent) Parent() Component {
-	return b.parent
+	return b.Bparent
 }
 
 func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
-	b.makeHtml(b.TagName, b.Body, b.Htmx)
+	b.makeHtml(b.TagName, b.Body, b.BHtmx)
 	var tmpl string
 
-	if b.OuterHtml == "" {
+	if b.BOuterHtml == "" {
 		tmpl = `{{ . }}`
 	} else {
-		tmpl = b.OuterHtml
+		tmpl = b.BOuterHtml
 	}
 
 	base, err := template.New("base.html").Parse(tmpl)
@@ -148,8 +148,8 @@ func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 
 	sb := strings.Builder{}
 
-	if b.style != nil {
-		_, err = styles.Write(b.style)
+	if b.Bstyle != nil {
+		_, err = styles.Write(b.Bstyle)
 		if err != nil {
 			panic(err)
 		}
@@ -158,12 +158,12 @@ func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 			panic(err)
 		}
 	}
-	for _, v := range b.components {
+	for _, v := range b.Bcomponents {
 		v.Render(&sb, styles)
 	}
 
 	classes := strings.Builder{}
-	for _, v := range b.classes {
+	for _, v := range b.Bclasses {
 		classes.WriteString(v)
 		classes.WriteString(" ")
 	}
@@ -172,34 +172,34 @@ func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 		Id    string
 		Class string
 		Body  string
-	}{b.id, classes.String(), sb.String()})
+	}{b.Bid, classes.String(), sb.String()})
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (b *BaseComponent) Name() string {
-	return b.name
+	return b.Bname
 }
 
 func (b *BaseComponent) Routes() []string {
-	return b.routes
+	return b.Broutes
 }
 
 func (b *BaseComponent) Route() string {
-	if b.parent != nil {
-		return b.parent.Route() + "/" + b.name
+	if b.Bparent != nil {
+		return b.Bparent.Route() + "/" + b.Bname
 	} else {
-		return "/" + b.name
+		return "/" + b.Bname
 	}
 }
 
 func (b *BaseComponent) Components() []Component {
-	return b.components
+	return b.Bcomponents
 }
 
 func (b *BaseComponent) Style() string {
-	return string(b.style)
+	return string(b.Bstyle)
 }
 
 func (b *BaseComponent) makeHtml(tagName string, body string, htmx *htmx.Hx) string {

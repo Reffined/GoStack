@@ -1,4 +1,4 @@
-package lib
+package components
 
 import "github.com/gin-gonic/gin"
 
