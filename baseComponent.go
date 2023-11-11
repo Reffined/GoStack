@@ -1,8 +1,7 @@
-package components
+package GoStack
 
 import (
 	"fmt"
-	"github.com/Reffined/GoStack/htmx"
 	"github.com/gin-gonic/gin"
 	"io"
 	"os"
@@ -22,7 +21,7 @@ type BaseComponent struct {
 	Bstyle      []byte
 	Bclasses    []string
 	Bid         string
-	BHtmx       *htmx.Hx
+	BHtmx       *Hx
 	TagName     string
 	Body        string
 	Attributes  []string
@@ -38,7 +37,7 @@ func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
 	b.Bclasses = append(b.Bclasses, c...)
 	return b
 }
-func (b *BaseComponent) AddHtmx(hx *htmx.Hx) *BaseComponent {
+func (b *BaseComponent) AddHtmx(hx *Hx) *BaseComponent {
 	b.BHtmx = hx
 	return b
 }
@@ -202,7 +201,7 @@ func (b *BaseComponent) Style() string {
 	return string(b.Bstyle)
 }
 
-func (b *BaseComponent) makeHtml(tagName string, body string, htmx *htmx.Hx) string {
+func (b *BaseComponent) makeHtml(tagName string, body string, htmx *Hx) string {
 	hx := strings.Builder{}
 	if htmx != nil {
 		ty := reflect.TypeOf(*htmx)

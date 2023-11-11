@@ -1,4 +1,4 @@
-package htmx
+package GoStack
 
 type Hx struct {
 	Get       string

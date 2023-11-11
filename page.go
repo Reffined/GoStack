@@ -1,7 +1,6 @@
-package html
+package GoStack
 
 import (
-	"github.com/Reffined/GoStack/components"
 	"github.com/gin-gonic/gin"
 	"io"
 	"os"
@@ -13,24 +12,24 @@ var templatePage string
 
 type GSPage struct {
 	name     string
-	children []components.Component
+	children []Component
 	router   *gin.Engine
 	parent   *GSPage
-	endpoint *components.Endpoint
+	endpoint *Endpoint
 }
 
 func (p *GSPage) AddStyle(file string) *GSPage {
 	if p.children == nil || len(p.children) == 0 {
 		return p
 	}
-	baseComp, ok := p.children[0].(*components.BaseComponent)
+	baseComp, ok := p.children[0].(*BaseComponent)
 	if ok {
 		baseComp.AddStyle(file)
 	}
 	return p
 }
 
-func (p *GSPage) AddParent(component components.Component) {
+func (p *GSPage) AddParent(component Component) {
 	v, ok := component.(*GSPage)
 	if ok {
 		p.parent = v
@@ -39,7 +38,7 @@ func (p *GSPage) AddParent(component components.Component) {
 	}
 }
 
-func (p *GSPage) Parent() components.Component {
+func (p *GSPage) Parent() Component {
 	return p.parent
 }
 
@@ -51,11 +50,11 @@ func (p *GSPage) Routes() []string {
 	return routes
 }
 
-func (p *GSPage) Components() []components.Component {
+func (p *GSPage) Components() []Component {
 	return p.children
 }
 
-func (p *GSPage) Endpoint() *components.Endpoint {
+func (p *GSPage) Endpoint() *Endpoint {
 	return p.endpoint
 }
 
@@ -72,7 +71,7 @@ func (p *GSPage) AddName(name string) *GSPage {
 	return p
 }
 
-func (p *GSPage) AddChild(c components.Component) *GSPage {
+func (p *GSPage) AddChild(c Component) *GSPage {
 	p.children = append(p.children, c)
 	c.AddParent(p)
 	return p
@@ -102,7 +101,7 @@ func Page(router *gin.Engine) *GSPage {
 	handler := func(ctx *gin.Context) {
 		page.Render(ctx.Writer, nil)
 	}
-	page.endpoint = &components.Endpoint{
+	page.endpoint = &Endpoint{
 		Get:    handler,
 		Post:   nil,
 		Put:    nil,
