@@ -10,6 +10,8 @@ import (
 	"text/template"
 )
 
+// BaseComponent is the base struct for all html tags users should try to only use the methods for
+// all their needs but fields are made public for certain use cases the B prefix is to avoid conflict with method names
 type BaseComponent struct {
 	Bname       string
 	Bparent     Component
@@ -37,6 +39,9 @@ func (b *BaseComponent) AddClass(c ...string) *BaseComponent {
 	b.Bclasses = append(b.Bclasses, c...)
 	return b
 }
+
+// AddHtmx takes a Hx struct and adds filled fields to the end html tag
+// read more about htmx at https://htmx.org
 func (b *BaseComponent) AddHtmx(hx *Hx) *BaseComponent {
 	b.BHtmx = hx
 	return b
@@ -103,6 +108,8 @@ func (b *BaseComponent) AddRouter(r *gin.Engine) *BaseComponent {
 	b.Brouter = r
 	return b
 }
+
+// AddParent is Same as GSPage.AddParent
 func (b *BaseComponent) AddParent(p Component) {
 	b.Bparent = p
 }
@@ -110,6 +117,8 @@ func (b *BaseComponent) addParent(p Component) *BaseComponent {
 	b.Bparent = p
 	return b
 }
+
+// AddName is the same as GSPage.AddName
 func (b *BaseComponent) AddName(name string) *BaseComponent {
 	b.Bname = name
 	return b
@@ -130,6 +139,7 @@ func (b *BaseComponent) Parent() Component {
 	return b.Bparent
 }
 
+// Render is the same as GSPage.Render
 func (b *BaseComponent) Render(writer io.Writer, styles io.Writer) {
 	b.makeHtml(b.TagName, b.Body, b.BHtmx)
 	var tmpl string
@@ -181,10 +191,12 @@ func (b *BaseComponent) Name() string {
 	return b.Bname
 }
 
+// Routes is the same as GSPage.Routes
 func (b *BaseComponent) Routes() []string {
 	return b.Broutes
 }
 
+// Route is the same as GSPage.Route
 func (b *BaseComponent) Route() string {
 	if b.Bparent != nil {
 		return b.Bparent.Route() + "/" + b.Bname

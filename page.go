@@ -10,6 +10,7 @@ import (
 
 var templatePage string
 
+// GSPage is a web page and automatically assigns a route to itself that can be visited by a get request.
 type GSPage struct {
 	name     string
 	children []Component
@@ -18,6 +19,7 @@ type GSPage struct {
 	endpoint *Endpoint
 }
 
+// AddStyle Takes a css file path and adds the content to the <style> tag of that page
 func (p *GSPage) AddStyle(file string) *GSPage {
 	if p.children == nil || len(p.children) == 0 {
 		return p
@@ -29,6 +31,8 @@ func (p *GSPage) AddStyle(file string) *GSPage {
 	return p
 }
 
+// AddParent is used by both the AddChild from other pages and users of the package to add a parent
+// for this GSPage and is used for forming a virtual DOM and routes
 func (p *GSPage) AddParent(component Component) {
 	v, ok := component.(*GSPage)
 	if ok {
@@ -66,11 +70,13 @@ func (p *GSPage) Style() string {
 	return ""
 }
 
+// AddName adds a name that is used for routing and can be seen in the url
 func (p *GSPage) AddName(name string) *GSPage {
 	p.name = name
 	return p
 }
 
+// AddChild adds a Component as a child to this GSPage and sets itself as the parent
 func (p *GSPage) AddChild(c Component) *GSPage {
 	p.children = append(p.children, c)
 	c.AddParent(p)
@@ -111,6 +117,7 @@ func Page(router *gin.Engine) *GSPage {
 	return &page
 }
 
+// Route generates the absolute path of the GSPage
 func (p *GSPage) Route() string {
 	if p.parent == nil {
 		return "/" + p.name
@@ -119,6 +126,7 @@ func (p *GSPage) Route() string {
 	}
 }
 
+// Render creates the final html by recursively traversing the tree and writes the result to an io.Writer
 func (p *GSPage) Render(writer io.Writer, style io.Writer) {
 	t, err := template.New("Page.html").Parse(templatePage)
 	if err != nil {
