@@ -1,4 +1,4 @@
-module github.com/reffined/GoStack
+module github.com/Reffined/GoStack
 
 go 1.21
 

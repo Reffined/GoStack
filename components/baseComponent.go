@@ -2,8 +2,8 @@ package components
 
 import (
 	"fmt"
+	"github.com/Reffined/GoStack/htmx"
 	"github.com/gin-gonic/gin"
-	"github.com/reffined/GoStack/htmx"
 	"io"
 	"os"
 	"reflect"

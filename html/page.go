@@ -1,8 +1,8 @@
 package html
 
 import (
+	"github.com/Reffined/GoStack/components"
 	"github.com/gin-gonic/gin"
-	"github.com/reffined/GoStack/components"
 	"io"
 	"os"
 	"strings"

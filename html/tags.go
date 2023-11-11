@@ -2,7 +2,7 @@ package html
 
 import (
 	"fmt"
-	"github.com/reffined/GoStack/components"
+	"github.com/Reffined/GoStack/components"
 )
 
 func Div() *components.BaseComponent {
