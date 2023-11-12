@@ -8,7 +8,7 @@ import (
 	"text/template"
 )
 
-var templatePage string
+var templatePage = "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <script crossorigin=\"anonymous\" integrity=\"sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni\" src=\"https://unpkg.com/htmx.org@1.9.6\"></script>\n    <script src=\"https://unpkg.com/htmx.org/dist/ext/json-enc.js\"></script>\n    <link crossorigin=\"anonymous\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css\" integrity=\"sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN\" rel=\"stylesheet\">\n    <script crossorigin=\"anonymous\" integrity=\"sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL\" src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js\"></script>\n    <meta charset=\"UTF-8\">\n    <title>{{.Title}}</title>\n</head>\n<header>\n\n</header>\n<body>\n    {{ .Body }}\n</body>\n<style>\n    {{ .Style }}\n</style>\n</html>"
 
 // GSPage is a web page and automatically assigns a route to itself that can be visited by a get request.
 type GSPage struct {
